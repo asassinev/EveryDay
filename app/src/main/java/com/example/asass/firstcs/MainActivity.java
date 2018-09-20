@@ -34,19 +34,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends Activity {
 
-
-    private static final String TAG_SUCCESS = "success";
-    private static final String TAG_Login = "login";
-    private static final String TAG_ID = "id";
-    private static final String TAG_Password = "password";
-    private static final String URL = "https://localhost";
-
-
-
     TextView label;
     static private String login, password;
     private static String[] scope = new String[]{VKScope.PHOTOS, VKScope.EMAIL};
-    private String appId = "com_vk_sdk_AppId";
     ImageButton VKbutton;
     Button Auth, Reg;
     EditText Login, Password;
@@ -98,26 +88,26 @@ public class MainActivity extends Activity {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
-   // static private String BASE_URL = "https://127.0.0.1";
+    static private String BASE_URL = "http://79.139.231.194:10202";
     public void Auth(View view) {
             if (isNetworkAvailable()) {
                 login = Login.getText().toString();
                 password = Password.getText().toString();
 
                 if (login.equals("") || password.equals("")) {
-                    Toast.makeText(getApplicationContext(), "Неправильный логин или пароль.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Введите логин и пароль.", Toast.LENGTH_SHORT).show();
                 } else {
                     Gson gson = new GsonBuilder()
                             .setLenient()
                             .create();
 
                     Retrofit retrofit = new Retrofit.Builder()
-                            .baseUrl("http://127.0.0.1:80")
+                            .baseUrl(BASE_URL)
                             .addConverterFactory(GsonConverterFactory.create(gson))
                             .build();
 
                     ServerApi auth = retrofit.create(ServerApi.class);
-                    auth.getUserDetails(login, password).enqueue(new Callback<User>() {
+                    auth.getUser(login, password).enqueue(new Callback<User>() {
                         @Override
                         public void onResponse(Call<User> call, Response<User> response) {
                             if (response.isSuccessful()) {
@@ -125,6 +115,14 @@ public class MainActivity extends Activity {
                                 Intent intent = new Intent(MainActivity.this, Profile.class);
                                 startActivity(intent);
                             } else {
+                                switch(response.code()) {
+                                    case 400:
+                                        Toast.makeText(getApplicationContext(), "Неправильный логин или пароль!", Toast.LENGTH_LONG).show();
+                                        break;
+                                    case 500:
+                                        // ошибка на сервере. можно использовать ResponseBody, см. ниже
+                                        break;
+                                }
                                 System.out.println(response.errorBody());
                             }
                         }
@@ -133,9 +131,6 @@ public class MainActivity extends Activity {
                             Toast.makeText(MainActivity.this, "An error occurred during networking", Toast.LENGTH_SHORT).show();
                         }
                     });
-
-
-
                 }
             } else
             {
