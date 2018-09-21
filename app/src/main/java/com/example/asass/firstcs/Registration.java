@@ -22,6 +22,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.example.asass.firstcs.config.BASE_URL;
+
 public class Registration extends Activity {
 
     private boolean isNetworkAvailable() {
@@ -36,8 +38,6 @@ public class Registration extends Activity {
     Button Regbut;
     EditText Login, Password;
 
-
-    private static String BASE_URL = "http://79.139.231.194:10202";
     private String login,password;
 
     protected void onCreate(Bundle savedInstanceState) {
