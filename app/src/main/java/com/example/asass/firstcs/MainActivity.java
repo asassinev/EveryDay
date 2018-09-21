@@ -31,6 +31,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.example.asass.firstcs.config.BASE_URL;
+
 
 public class MainActivity extends Activity {
 
@@ -88,7 +90,6 @@ public class MainActivity extends Activity {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
-    static private String BASE_URL = "http://79.139.231.194:10202";
     public void Auth(View view) {
             if (isNetworkAvailable()) {
                 login = Login.getText().toString();
