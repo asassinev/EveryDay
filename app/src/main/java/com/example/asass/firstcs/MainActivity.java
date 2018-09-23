@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -33,10 +32,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.example.asass.firstcs.config.BASE_URL;
 
-
 public class MainActivity extends Activity {
 
-    TextView label;
     static private String login, password;
     private static String[] scope = new String[]{VKScope.PHOTOS, VKScope.EMAIL};
     ImageButton VKbutton;
@@ -45,43 +42,79 @@ public class MainActivity extends Activity {
     LoginButton LoginButton;
     CallbackManager callbackManager;
 
-
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setView();
+        buttonListener();
+
+    }
+
+    public void setView(){
         LoginButton = (LoginButton) findViewById(R.id.login_button);
         VKbutton = (ImageButton) findViewById(R.id.VK_button);
         Auth = (Button) findViewById(R.id.Authorize);
         Reg = (Button) findViewById(R.id.Registration);
         Login = (EditText) findViewById(R.id.Login);
         Password = (EditText) findViewById(R.id.Password);
-        label = (TextView) findViewById(R.id.internet_access);
+    }
+
+    public void buttonListener(){
         callbackManager = CallbackManager.Factory.create();
         LoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                Toast.makeText(getApplicationContext(), "Успешно", Toast.LENGTH_LONG).show();
+                Toast("Успешно");
                 Intent intent = new Intent(MainActivity.this, Profile.class);
                 startActivity(intent);
             }
 
             @Override
             public void onCancel() {
-                Toast.makeText(getApplicationContext(), "Пожалуйста повторите попытку", Toast.LENGTH_LONG).show();
+                Toast("Пожалуйста повторите попытку");
             }
 
             @Override
             public void onError(FacebookException exception) {
-                Toast.makeText(getApplicationContext(), "Ошибка!", Toast.LENGTH_LONG).show();
+                Toast("Ошибка!");
+            }
+        });
+
+        Auth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isNetworkAvailable()) {
+                    login = Login.getText().toString();
+                    password = Password.getText().toString();
+                    if (login.isEmpty() || password.isEmpty()) {
+                        Toast("Введите логин и пароль.");
+                    } else {
+                        Authorization();
+                    }
+                } else {
+                    Toast("Подключите интернет!");
+                }
+            }
+        });
+
+        Reg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, Registration.class);
+                startActivity(intent);
             }
         });
     }
 
+
     public void AuthVK(View view) {
-        VKSdk.login(this,scope);
+        if (isNetworkAvailable()) {
+            VKSdk.login(this,scope);
+        } else {
+            Toast("Подключите интернет!");
+        }
     }
 
     private boolean isNetworkAvailable() {
@@ -90,58 +123,9 @@ public class MainActivity extends Activity {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
-    public void Auth(View view) {
-            if (isNetworkAvailable()) {
-                login = Login.getText().toString();
-                password = Password.getText().toString();
 
-                if (login.equals("") || password.equals("")) {
-                    Toast.makeText(getApplicationContext(), "Введите логин и пароль.", Toast.LENGTH_SHORT).show();
-                } else {
-                    Gson gson = new GsonBuilder()
-                            .setLenient()
-                            .create();
-
-                    Retrofit retrofit = new Retrofit.Builder()
-                            .baseUrl(BASE_URL)
-                            .addConverterFactory(GsonConverterFactory.create(gson))
-                            .build();
-
-                    ServerApi auth = retrofit.create(ServerApi.class);
-                    auth.getUser(login, password).enqueue(new Callback<User>() {
-                        @Override
-                        public void onResponse(Call<User> call, Response<User> response) {
-                            if (response.isSuccessful()) {
-                                Toast.makeText(getApplicationContext(), "Добро пожаловать!", Toast.LENGTH_LONG).show();
-                                Intent intent = new Intent(MainActivity.this, Profile.class);
-                                startActivity(intent);
-                            } else {
-                                switch(response.code()) {
-                                    case 400:
-                                        Toast.makeText(getApplicationContext(), "Неправильный логин или пароль!", Toast.LENGTH_LONG).show();
-                                        break;
-                                    case 500:
-                                        // ошибка на сервере. можно использовать ResponseBody, см. ниже
-                                        break;
-                                }
-                                System.out.println(response.errorBody());
-                            }
-                        }
-                        @Override
-                        public void onFailure(Call<User> call, Throwable t) {
-                            Toast.makeText(MainActivity.this, "An error occurred during networking", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-            } else
-            {
-                Toast.makeText(getApplicationContext(), "Подключите интернет!", Toast.LENGTH_LONG).show();
-            }
-    }
-
-    public void Reg(View view){
-        Intent intent = new Intent(MainActivity.this, Registration.class);
-        startActivity(intent);
+    public void Toast(String text){
+        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -149,17 +133,59 @@ public class MainActivity extends Activity {
         if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
             @Override
             public void onResult(VKAccessToken res) {
-                Toast.makeText(getApplicationContext(),"Успешно",Toast.LENGTH_LONG).show();
+                Toast("Успешно");
                 Intent intent = new Intent(MainActivity.this, Profile.class);
                 startActivity(intent);
             }
+
             @Override
             public void onError(VKError error) {
-                Toast.makeText(getApplicationContext(),"Ошибка!",Toast.LENGTH_LONG).show();
+                Toast("Ошибка!");
             }
+
         })) {
             callbackManager.onActivityResult(requestCode, resultCode, data);
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    public void Authorization(){
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        ServerApi auth = retrofit.create(ServerApi.class);
+        auth.getUser(login, password).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful()) {
+                    Toast("Добро пожаловать!");
+                    Intent intent = new Intent(MainActivity.this, Profile.class);
+
+                    intent.putExtra("login", login);
+                    startActivity(intent);
+                } else {
+                    switch(response.code()) {
+                        case 400:
+                            Toast("Неправильный логин или пароль!");
+                            break;
+                        case 500:
+                            // ошибка на сервере. можно использовать ResponseBody, см. ниже
+                            break;
+                    }
+                    System.out.println(response.errorBody());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Toast("An error occurred during networking");
+            }
+        });
     }
 }
