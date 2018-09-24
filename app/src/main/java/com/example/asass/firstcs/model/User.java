@@ -1,16 +1,27 @@
-package com.example.asass.firstcs;
+package com.example.asass.firstcs.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class User {
 
+    @SerializedName("email")
+    @Expose
+    private String email;
     @SerializedName("login")
     @Expose
     private String login;
     @SerializedName("password")
     @Expose
     private String password;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public String getLogin() {
         return login;
