@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:orientation="vertical"
+    tools:context=".Activity.MainActivity">
 
     <ImageButton
         android:id="@+id/VK_button"
@@ -86,7 +87,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="5"
-            android:onClick="Auth"
             android:textSize="40px"
             android:text="Войти" />
 
@@ -95,19 +95,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="5"
-            android:onClick="Reg"
             android:textSize="40px"
             android:text="Зарегистрироваться" />
 
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/internet_access"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        tools:layout_editor_absoluteX="65dp"
-        tools:layout_editor_absoluteY="457dp"
-        tools:ignore="MissingConstraints" />
 
 </android.support.constraint.ConstraintLayout>

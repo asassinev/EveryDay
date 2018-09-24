@@ -1,4 +1,4 @@
-package com.example.asass.firstcs;
+package com.example.asass.firstcs.Activity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -11,6 +11,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
+
+import com.example.asass.firstcs.API.ServerApi;
+import com.example.asass.firstcs.R;
+import com.example.asass.firstcs.model.User;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -30,7 +34,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.example.asass.firstcs.config.BASE_URL;
+import static com.example.asass.firstcs.utils.config.BASE_URL;
 
 public class MainActivity extends Activity {
 
@@ -49,7 +53,6 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         setView();
         buttonListener();
-
     }
 
     public void setView(){
@@ -91,7 +94,7 @@ public class MainActivity extends Activity {
                     if (login.isEmpty() || password.isEmpty()) {
                         Toast("Введите логин и пароль.");
                     } else {
-                        Authorization();
+                        loadJSON();
                     }
                 } else {
                     Toast("Подключите интернет!");
@@ -107,7 +110,6 @@ public class MainActivity extends Activity {
             }
         });
     }
-
 
     public void AuthVK(View view) {
         if (isNetworkAvailable()) {
@@ -149,7 +151,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void Authorization(){
+    public void loadJSON(){
         Gson gson = new GsonBuilder()
                 .setLenient()
                 .create();
@@ -166,7 +168,6 @@ public class MainActivity extends Activity {
                 if (response.isSuccessful()) {
                     Toast("Добро пожаловать!");
                     Intent intent = new Intent(MainActivity.this, Profile.class);
-
                     intent.putExtra("login", login);
                     startActivity(intent);
                 } else {
