@@ -1,4 +1,4 @@
-package com.example.asass.firstcs;
+package com.example.asass.firstcs.Activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -7,12 +7,14 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Message;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.asass.firstcs.API.ServerApi;
+import com.example.asass.firstcs.R;
+import com.example.asass.firstcs.model.User;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -22,7 +24,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.example.asass.firstcs.config.BASE_URL;
+import static com.example.asass.firstcs.utils.config.BASE_URL;
 
 public class Registration extends Activity {
 
@@ -36,9 +38,9 @@ public class Registration extends Activity {
     private ProgressDialog pDialog;
 
     Button Regbut;
-    EditText Login, Password;
+    EditText Login, Password, Email;
 
-    private String login,password;
+    private String login,password, email;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +49,7 @@ public class Registration extends Activity {
         Regbut = (Button) findViewById(R.id.regbut);
         Login = (EditText) findViewById(R.id.login);
         Password = (EditText) findViewById(R.id.password);
+        Email = (EditText) findViewById(R.id.email);
 
         Regbut.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,8 +57,9 @@ public class Registration extends Activity {
                 if (isNetworkAvailable()) {
                     login = Login.getText().toString();
                     password = Password.getText().toString();
-                    if (login.equals("") || password.equals("")) {
-                        Toast.makeText(getApplicationContext(), "Введите логин и пароль.", Toast.LENGTH_LONG).show();
+                    email = Email.getText().toString();
+                    if (login.isEmpty() || password.isEmpty() || email.isEmpty()) {
+                        Toast.makeText(getApplicationContext(), "Введите логин и пароль.", Toast.LENGTH_SHORT).show();
                     } else {
                         Gson gson = new GsonBuilder()
                                 .setLenient()
@@ -67,17 +71,18 @@ public class Registration extends Activity {
                                 .build();
 
                         ServerApi reg = retrofit.create(ServerApi.class);
-                        reg.createUser(login, password).enqueue(new Callback<User>() {
+                        reg.createUser(login, password, email).enqueue(new Callback<User>() {
                             @Override
                             public void onResponse(Call<User> call, Response<User> response) {
                                 if (response.isSuccessful()) {
-                                    Toast.makeText(getApplicationContext(), "Добро пожаловать!", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(), "Добро пожаловать!", Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(Registration.this, Profile.class);
+                                    intent.putExtra("login", login);
                                     startActivity(intent);
                                 } else {
                                     switch(response.code()) {
                                         case 400:
-                                            Toast.makeText(getApplicationContext(), "Логин занят!", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(getApplicationContext(), "Логин занят!", Toast.LENGTH_SHORT).show();
                                             break;
                                         case 500:
                                             // ошибка на сервере. можно использовать ResponseBody, см. ниже
@@ -94,7 +99,7 @@ public class Registration extends Activity {
                     }
                 } else
                 {
-                    Toast.makeText(getApplicationContext(), "Подключите интернет!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Подключите интернет!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
