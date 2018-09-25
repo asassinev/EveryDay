@@ -11,9 +11,9 @@ public class Tweet {
     @SerializedName("body")
     @Expose
     private String body;
-   /* @SerializedName("login")
+    @SerializedName("textCreatedAt")
     @Expose
-    private String login;*/
+    private String textCreatedAt;
 
     public String getHead() {
         return head;
@@ -31,13 +31,13 @@ public class Tweet {
         this.body = body;
     }
 
-    /*public String getLogin() {
-        return login;
+    public String getTextCreatedAt() {
+        return textCreatedAt;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
-    }*/
+    public void setTextCreatedAt(String textCreatedAt) {
+        this.textCreatedAt = textCreatedAt;
+    }
 
 }
 
