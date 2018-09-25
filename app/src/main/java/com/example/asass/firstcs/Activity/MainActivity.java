@@ -1,4 +1,5 @@
 package com.example.asass.firstcs.Activity;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -37,7 +38,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import static com.example.asass.firstcs.utils.config.BASE_URL;
 
 public class MainActivity extends Activity {
-
+    public static User user = new User();
     static private String login, password;
     private static String[] scope = new String[]{VKScope.PHOTOS, VKScope.EMAIL};
     ImageButton VKbutton;
@@ -119,16 +120,17 @@ public class MainActivity extends Activity {
         }
     }
 
-    private boolean isNetworkAvailable() {
+    public void Toast(String text){
+        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+    }
+
+    public boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    public void Toast(String text){
-        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -168,6 +170,8 @@ public class MainActivity extends Activity {
                 if (response.isSuccessful()) {
                     Toast("Добро пожаловать!");
                     Intent intent = new Intent(MainActivity.this, Profile.class);
+                    user.setLogin(login);
+                    user.setAccessToken(response.body().getAccessToken());
                     intent.putExtra("login", login);
                     startActivity(intent);
                 } else {
