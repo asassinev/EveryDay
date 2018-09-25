@@ -9,13 +9,13 @@ import android.widget.TextView;
 import com.example.asass.firstcs.R;
 import com.example.asass.firstcs.model.Tweet;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
-    private ArrayList<Tweet> tweets;
+    private List<Tweet> tweets;
 
-    public MyAdapter(ArrayList<Tweet> tweets) {
+    public MyAdapter(List<Tweet> tweets) {
         this.tweets = tweets;
     }
 
@@ -29,6 +29,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     public void onBindViewHolder(MyAdapter.ViewHolder holder, int i) {
         holder.head.setText(tweets.get(i).getHead());
         holder.body.setText(tweets.get(i).getBody());
+        String string = new String(tweets.get(i).getTextCreatedAt());
+        String string2 = string.substring(0,19);
+        String string3 = string2.replace('T',' ');
+        holder.textCreatedAt.setText(string3);
     }
 
     @Override
@@ -37,12 +41,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        private TextView head,body;
+        TextView head,body,textCreatedAt;
         public ViewHolder(View view) {
             super(view);
-
             head = (TextView)view.findViewById(R.id.head);
             body = (TextView)view.findViewById(R.id.body);
+            textCreatedAt = (TextView)view.findViewById(R.id.textCreatedAt);
 
         }
     }
