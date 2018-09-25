@@ -10,7 +10,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.asass.firstcs.API.ServerApi;
-import com.example.asass.firstcs.model.JSONResponse;
 import com.example.asass.firstcs.R;
 import com.example.asass.firstcs.model.Tweet;
 import com.example.asass.firstcs.model.User;
@@ -18,7 +17,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 
 import com.example.asass.firstcs.Adapter.MyAdapter;
 import retrofit2.Call;
@@ -31,23 +30,23 @@ import static com.example.asass.firstcs.utils.config.BASE_URL;
 
 public class Profile extends Activity {
 
-    private RecyclerView recyclerView;
-    private ArrayList<Tweet> data;
-    private MyAdapter adapter;
     public static User user = new User();
+    private RecyclerView recyclerView;
+    List<Tweet> data;
+    private MyAdapter adapter;
     TextView Login, Head, Body;
-
+    public String login;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile);
         Intent intent = getIntent();
-        String login = intent.getStringExtra("login");
+        login = intent.getStringExtra("login");
         Login = (TextView) findViewById(R.id.Login) ;
         Head = (TextView) findViewById(R.id.head) ;
         Body = (TextView) findViewById(R.id.body) ;
+        user.setLogin((String) Login.getText());
         Login.setText(login);
-        user.setLogin(Login.getText().toString());
-
+        data = new ArrayList<>();
         initRecyclerView();
     }
 
@@ -56,6 +55,8 @@ public class Profile extends Activity {
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
+        adapter = new MyAdapter(data);
+        recyclerView.setAdapter(adapter);
         loadJSON();
     }
 
@@ -69,17 +70,13 @@ public class Profile extends Activity {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
         ServerApi request = retrofit.create(ServerApi.class);
-        Call<JSONResponse> call = request.getTweets(user.getLogin());
-        call.enqueue(new Callback<JSONResponse>() {
+        Call<List<Tweet>> call = request.getTweets(login);
+        call.enqueue(new Callback<List<Tweet>>() {
             @Override
-            public void onResponse(Call<JSONResponse> call, Response<JSONResponse> response) {
+            public void onResponse(Call<List<Tweet>> call, Response<List<Tweet>> response) {
                 if (response.isSuccessful()){
-                JSONResponse jsonResponse = response.body();
-                data = new ArrayList<>(Arrays.asList(jsonResponse.getTweets()));
-                    System.out.print("BEFORE");
-                    System.out.print(response.toString());
-                adapter = new MyAdapter(data);
-                recyclerView.setAdapter(adapter);
+                data.addAll(response.body());
+                recyclerView.getAdapter().notifyDataSetChanged();
                 } else {
                 switch(response.code()) {
                     case 400:
@@ -94,7 +91,7 @@ public class Profile extends Activity {
             }
 
             @Override
-            public void onFailure(Call<JSONResponse> call, Throwable t) {
+            public void onFailure(Call<List<Tweet>> call, Throwable t) {
                 Log.d("Error",t.getMessage());
             }
         });
