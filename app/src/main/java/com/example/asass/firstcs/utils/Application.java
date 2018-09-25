@@ -1,6 +1,10 @@
 package com.example.asass.firstcs.utils;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.widget.Toast;
 
 import com.example.asass.firstcs.Activity.MainActivity;
 import com.vk.sdk.VKAccessToken;
