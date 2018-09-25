@@ -59,7 +59,7 @@ public class Registration extends Activity {
                     password = Password.getText().toString();
                     email = Email.getText().toString();
                     if (login.isEmpty() || password.isEmpty() || email.isEmpty()) {
-                        Toast.makeText(getApplicationContext(), "Введите логин и пароль.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Укажите все данные.", Toast.LENGTH_SHORT).show();
                     } else {
                         Gson gson = new GsonBuilder()
                                 .setLenient()
@@ -75,6 +75,7 @@ public class Registration extends Activity {
                             @Override
                             public void onResponse(Call<User> call, Response<User> response) {
                                 if (response.isSuccessful()) {
+                                    response.body();
                                     Toast.makeText(getApplicationContext(), "Добро пожаловать!", Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(Registration.this, Profile.class);
                                     intent.putExtra("login", login);
