@@ -1,0 +1,35 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/customdialog"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="10dp"
+    >
+    <TextView
+        android:id="@+id/dialogtextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+    <EditText
+        android:id="@+id/dialogHeader"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        />
+    <EditText
+        android:id="@+id/dialogBody"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        />
+    <Button
+        android:id="@+id/dialogAdd"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Add text"
+        />
+    <Button
+        android:id="@+id/dialogdismiss"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Exit"
+        />
+</LinearLayout>

@@ -1,23 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@color/colorPrimary"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/textView2"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:background="@color/colorPrimaryVariant"
+        android:text="Регистрация"
+        android:textAlignment="center"
+        android:textColor="@color/colorText"
+        android:textColorHint="@color/colorText"
+        android:textSize="42sp"
+        android:textStyle="bold|italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
 
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5"
-            android:text="Регистрация"
-            android:textColor="@color/vk_share_gray_line"
-            android:textSize="33sp" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/colorPrimary"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        app:layout_constraintVertical_bias="0.25"
+        tools:ignore="MissingConstraints">
 
         <EditText
             android:id="@+id/email"
@@ -25,9 +46,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
-            android:hint="email"
+            android:hint="Email"
             android:inputType="textEmailAddress"
-            android:textSize="25sp" />
+            android:paddingLeft="10dp"
+            android:textColor="@color/colorText"
+            android:textColorHint="@color/colorText"
+            android:textSize="14sp"
+            android:textStyle="italic" />
 
         <EditText
             android:id="@+id/login"
@@ -37,7 +62,11 @@
             android:ems="10"
             android:hint="Логин"
             android:inputType="textPersonName"
-            android:textSize="25sp" />
+            android:paddingLeft="10dp"
+            android:textColor="@color/colorText"
+            android:textColorHint="@color/colorText"
+            android:textSize="14sp"
+            android:textStyle="italic" />
 
         <EditText
             android:id="@+id/password"
@@ -47,15 +76,21 @@
             android:ems="10"
             android:hint="Пароль"
             android:inputType="textPassword"
-            android:textSize="25sp" />
+            android:paddingLeft="10dp"
+            android:textColor="@color/colorText"
+            android:textColorHint="@color/colorText"
+            android:textSize="14sp"
+            android:textStyle="italic" />
 
         <Button
             android:id="@+id/regbut"
-            android:layout_width="match_parent"
+            android:layout_width="305dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/roundbtn"
             android:onClick="onClick"
             android:text="Зарегистрироваться"
-            android:textSize="25sp" />
+            android:textColor="@color/colorText"
+            android:textSize="14sp" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
