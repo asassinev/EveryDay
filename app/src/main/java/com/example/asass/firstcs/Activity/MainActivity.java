@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.asass.firstcs.API.ServerApi;
 import com.example.asass.firstcs.R;
+import com.example.asass.firstcs.model.Token;
 import com.example.asass.firstcs.model.User;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -29,6 +30,8 @@ import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKError;
 
+import java.util.ArrayList;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -38,7 +41,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import static com.example.asass.firstcs.utils.config.BASE_URL;
 
 public class MainActivity extends Activity {
-    public static User user = new User();
     static private String login, password;
     private static String[] scope = new String[]{VKScope.PHOTOS, VKScope.EMAIL};
     ImageButton VKbutton;
@@ -46,12 +48,14 @@ public class MainActivity extends Activity {
     EditText Login, Password;
     LoginButton LoginButton;
     CallbackManager callbackManager;
+    ArrayList<Token> data;
 
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         setView();
         buttonListener();
     }
@@ -131,7 +135,6 @@ public class MainActivity extends Activity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
@@ -154,6 +157,7 @@ public class MainActivity extends Activity {
     }
 
     public void loadJSON(){
+
         Gson gson = new GsonBuilder()
                 .setLenient()
                 .create();
@@ -164,15 +168,20 @@ public class MainActivity extends Activity {
                 .build();
 
         ServerApi auth = retrofit.create(ServerApi.class);
-        auth.getUser(login, password).enqueue(new Callback<User>() {
+        Call<Token> call = auth.getUser(login, password);
+        call.enqueue(new Callback<Token>() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
+            public void onResponse(Call<Token> call, Response<Token> response) {
                 if (response.isSuccessful()) {
+                    response.body();
+                    String accessToken = response.body().getAccessToken();
+                    System.out.println(accessToken);
+                    String refreshToken = response.body().getRefreshToken();
+                    System.out.println(refreshToken);
                     Toast("Добро пожаловать!");
                     Intent intent = new Intent(MainActivity.this, Profile.class);
-                    user.setLogin(login);
-                    user.setAccessToken(response.body().getAccessToken());
                     intent.putExtra("login", login);
+                    intent.putExtra("accessToken", accessToken);
                     startActivity(intent);
                 } else {
                     switch(response.code()) {
@@ -185,10 +194,10 @@ public class MainActivity extends Activity {
                     }
                     System.out.println(response.errorBody());
                 }
-            }
+        }
 
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
+            public void onFailure(Call<Token> call, Throwable t) {
                 Toast("An error occurred during networking");
             }
         });
