@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:theme="@style/AppTheme"
     tools:context=".Activity.MainActivity">
 
     <TextView
@@ -20,9 +22,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
         android:orientation="vertical"
-        android:padding="50dp"
-        android:layout_marginTop="40dp">
+        android:padding="50dp">
 
         <EditText
             android:id="@+id/Login"
@@ -64,39 +66,38 @@
             android:background="@drawable/roundbtn"
             android:text="Зарегистрироваться"
             android:textColor="#fff" />
-
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="40dp"
         android:orientation="horizontal"
         android:padding="10dp">
 
         <Button
             android:id="@+id/VK_Button"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="45dp"
-            android:layout_weight="1"
-            android:drawableRight="@drawable/ic_vkontakte_logo"
             android:background="@drawable/btn2"
-            android:layout_gravity="center|left"
-            android:textSize="14sp"
-            android:text="Войти через"
-            android:textColor="#fff"/>
+            android:drawableLeft="@drawable/ic_vkontakte_logo"
+            android:drawablePadding="5dp"
+            android:text="Войти через VK"
+            android:textColor="#fff"
+            android:textSize="14sp" />
 
         <Button
             android:id="@+id/FB_Button"
-            android:layout_width="match_parent"
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
             android:layout_height="45dp"
-            android:drawableRight="@drawable/ic_facebook_8"
-            android:background="@drawable/btn2"
-            android:layout_gravity="center|right"
             android:layout_marginLeft="10dp"
-            android:textSize="14sp"
-            android:text="Войти через"
-            android:textColor="#fff"/>
+            android:background="@drawable/btn2"
+            android:drawableLeft="@drawable/ic_facebook_8"
+            android:drawablePadding="5dp"
+            android:text="Войти через FB"
+            android:textColor="#fff"
+            android:textSize="14sp" />
 
     </LinearLayout>
 

@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -16,10 +17,10 @@ import android.widget.Toast;
 
 import com.example.asass.firstcs.API.ServerApi;
 import com.example.asass.firstcs.R;
+import com.example.asass.firstcs.model.Token;
 import com.example.asass.firstcs.model.Tweet;
 import com.example.asass.firstcs.model.User;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.example.asass.firstcs.utils.APIUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,38 +33,30 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
-import static com.example.asass.firstcs.utils.config.BASE_URL;
 
 public class Profile extends Activity {
 
-    public static User user = new User();
-    private RecyclerView recyclerView;
-    List<Tweet> data;
-
-    static final int CUSTOM_DIALOG_ID = 0;
-    TextView customDialog_TextView;
     EditText customDialog_Header, customDialog_Body;
     Button customDialog_Update, customDialog_Dismiss;
+    TextView Login, Head, Body;
+    FloatingActionButton floatingActionButton;
+
+    public static User user = new User();
+    public Token token = new Token();
+    private RecyclerView recyclerView;
+    private List<Tweet> data = new ArrayList<>();;
+    static final int CUSTOM_DIALOG_ID = 0;
 
     private MyAdapter adapter;
-    TextView Login, Head, Body;
-    public String login, accessToken;
-    FloatingActionButton floatingActionButton;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile);
-        Intent intent = getIntent();
-        login = intent.getStringExtra("login");
-        accessToken = intent.getStringExtra("accessToken");
-        System.out.println("accessToken profile//" + accessToken);
-        Login = (TextView) findViewById(R.id.Login);
-        Head = (TextView) findViewById(R.id.head);
-        Body = (TextView) findViewById(R.id.body);
-        user.setLogin((String) Login.getText());
-        Login.setText(login);
-        data = new ArrayList<>();
+
+        setView();
+        getExtra();
+        initRecyclerView();
+
         floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,109 +64,130 @@ public class Profile extends Activity {
                 showDialog(CUSTOM_DIALOG_ID);
             }
         });
-        initRecyclerView();
     }
-            private Button.OnClickListener customDialog_UpdateOnClickListener
-                    = new Button.OnClickListener(){
 
-                @Override
-                public void onClick(View arg0) {
-                    Retrofit retrofit = new Retrofit.Builder()
-                            .baseUrl(BASE_URL)
-                            .addConverterFactory(GsonConverterFactory.create())
-                            .build();
-                    ServerApi request = retrofit.create(ServerApi.class);
-                    Map<String, String> hashMap = new HashMap<>();
-                    hashMap.put("head", customDialog_Header.getText().toString());
-                    hashMap.put("body", customDialog_Body.getText().toString());
-                    hashMap.put("login", login);
-                    Call<Tweet> call = request.createText(hashMap, accessToken);
-                    call.enqueue(new Callback<Tweet>() {
-                        @Override
-                        public void onResponse(Call<Tweet> call, Response<Tweet> response) {
-                            if (response.isSuccessful()){
-                                Toast.makeText(getApplicationContext(), "Добавлено!", Toast.LENGTH_SHORT).show();
-                                recyclerView.getAdapter().notifyDataSetChanged();
-                                loadJSON();
-                            } else {
-                                switch(response.code()) {
-                                    case 400:
-                                        Toast.makeText(getApplicationContext(), "Токен устарел!", Toast.LENGTH_SHORT).show();
-                                        break;
-                                    case 401:
-                                        Toast.makeText(getApplicationContext(), "Неверный токен!", Toast.LENGTH_SHORT).show();
-                                    case 500:
-                                        // ошибка на сервере. можно использовать ResponseBody, см. ниже
-                                        break;
-                                }
-                                System.out.println(response.errorBody());
-                            }
-                        }
+    public void setView(){
+        Login = (TextView) findViewById(R.id.Login);
+        Head = (TextView) findViewById(R.id.head);
+        Body = (TextView) findViewById(R.id.body);
+    }
 
-                        @Override
-                        public void onFailure(Call<Tweet> call, Throwable t) {
-                            Log.d("Error",t.getMessage());
-                        }
-                    });
-                    dismissDialog(CUSTOM_DIALOG_ID);
-                }
-            };
+    public void getExtra() {
+        Intent intent = getIntent();
+        user.setLogin(intent.getStringExtra("login"));
+        token.setAccessToken(intent.getStringExtra("accessToken"));
+        token.setRefreshToken(intent.getStringExtra("refreshToken"));
+        Login.setText(user.getLogin());
+    }
 
-            private Button.OnClickListener customDialog_DismissOnClickListener
-                    = new Button.OnClickListener(){
+    private Button.OnClickListener customDialog_UpdateOnClickListener
+            = new Button.OnClickListener(){
 
-                @Override
-                public void onClick(View arg0) {
-                    dismissDialog(CUSTOM_DIALOG_ID);
-                }
+        @Override
+        public void onClick(View arg0) {
+            loadText();
+            dismissDialog(CUSTOM_DIALOG_ID);
+        }
+    };
 
-            };
+    private Button.OnClickListener customDialog_DismissOnClickListener
+            = new Button.OnClickListener(){
 
-            @Override
-            protected Dialog onCreateDialog(int id) {
-                Dialog dialog = null;;
-                switch(id) {
-                    case CUSTOM_DIALOG_ID:
-                        dialog = new Dialog(Profile.this);
+        @Override
+        public void onClick(View arg0) {
+            dismissDialog(CUSTOM_DIALOG_ID);
+        }
 
-                        dialog.setContentView(R.layout.customdialog);
-                        dialog.setTitle("Добавить заметку");
+    };
 
-                        customDialog_Header = (EditText)dialog.findViewById(R.id.dialogHeader);
-                        customDialog_Body = (EditText)dialog.findViewById(R.id.dialogBody);
-                        customDialog_TextView = (TextView)dialog.findViewById(R.id.dialogtextview);
-                        customDialog_Update = (Button)dialog.findViewById(R.id.dialogAdd);
-                        customDialog_Dismiss = (Button)dialog.findViewById(R.id.dialogdismiss);
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        Dialog dialog = null;;
+        switch(id) {
+            case CUSTOM_DIALOG_ID:
+                dialog = new Dialog(Profile.this);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setContentView(R.layout.customdialog);
 
-                        customDialog_Update.setOnClickListener(customDialog_UpdateOnClickListener);
-                        customDialog_Dismiss.setOnClickListener(customDialog_DismissOnClickListener);
+                customDialog_Header = (EditText)dialog.findViewById(R.id.dialogHeader);
+                customDialog_Body = (EditText)dialog.findViewById(R.id.dialogBody);
+                customDialog_Update = (Button)dialog.findViewById(R.id.dialogAdd);
+                customDialog_Dismiss = (Button)dialog.findViewById(R.id.dialogdismiss);
 
-                        break;
-                }
-                return dialog;
-            }
+                customDialog_Update.setOnClickListener(customDialog_UpdateOnClickListener);
+                customDialog_Dismiss.setOnClickListener(customDialog_DismissOnClickListener);
+
+                break;
+        }
+        return dialog;
+    }
 
     private void initRecyclerView(){
         recyclerView = (RecyclerView)findViewById(R.id.my_recyle_view);
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
+        data = new ArrayList<>();
         adapter = new MyAdapter(data);
         recyclerView.setAdapter(adapter);
-        loadJSON();
+        loadTweet();
     }
 
-    public void loadJSON(){
-        Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
+    public void Toast(String text){
+        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+    }
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
+    public void loadText() {
+        Retrofit retrofit = APIUtils.getRetrofit();
         ServerApi request = retrofit.create(ServerApi.class);
-        Call<List<Tweet>> call = request.getTweets(login, accessToken);
+
+        Map<String, String> hashMap = new HashMap<>();
+        hashMap.put("head", customDialog_Header.getText().toString());
+        hashMap.put("body", customDialog_Body.getText().toString());
+        hashMap.put("login", user.getLogin());
+
+        Call<Tweet> call = request.createText(hashMap, token.getAccessToken());
+        call.enqueue(new Callback<Tweet>() {
+            @Override
+            public void onResponse(Call<Tweet> call, Response<Tweet> response) {
+                if (response.isSuccessful()){
+                    Toast.makeText(getApplicationContext(), "Добавлено!", Toast.LENGTH_SHORT).show();
+                    loadTweet();
+                    recyclerView.getAdapter().notifyDataSetChanged();
+                    customDialog_Header.setText("");
+                    customDialog_Body.setText("");
+                } else {
+                    switch(response.code()) {
+                        case 400:
+                            //old token
+                            updateToken();
+                            loadText();
+                            break;
+                        case 401:
+                            //invalid token
+                            Intent intent = new Intent(Profile.this, MainActivity.class);
+                            startActivity(intent);
+                            Toast.makeText(getApplicationContext(), "Пожалуйста, авторизируйтесь заново!", Toast.LENGTH_SHORT).show();
+                        case 500:
+                            Toast.makeText(getApplicationContext(), "Пожалуйста, повторите позже!", Toast.LENGTH_SHORT).show();
+                            break;
+                    }
+                    System.out.println(response.errorBody());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Tweet> call, Throwable t) {
+                Log.d("Error",t.getMessage());
+            }
+        });
+    }
+
+    public void loadTweet(){
+        Retrofit retrofit = APIUtils.getRetrofit();
+        ServerApi request = retrofit.create(ServerApi.class);
+
+        Call<List<Tweet>> call = request.getTweets(user.getLogin(), token.getAccessToken());
         call.enqueue(new Callback<List<Tweet>>() {
             @Override
             public void onResponse(Call<List<Tweet>> call, Response<List<Tweet>> response) {
@@ -182,27 +196,54 @@ public class Profile extends Activity {
                     data.addAll(response.body());
                     recyclerView.getAdapter().notifyDataSetChanged();
                 } else {
-                switch(response.code()) {
-                    case 400:
-                        Toast.makeText(getApplicationContext(), "Токен устарел!", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 401:
-                        Toast.makeText(getApplicationContext(), "Неверный токен!", Toast.LENGTH_SHORT).show();
-                    case 500:
-                        // ошибка на сервере. можно использовать ResponseBody, см. ниже
-                        break;
-                }
-                System.out.println(response.errorBody());
+                    switch(response.code()) {
+                        case 400:
+                            //old token
+                            updateToken();
+                            loadTweet();
+                            break;
+                        case 401:
+                            //invalid token
+                            Intent intent = new Intent(Profile.this, MainActivity.class);
+                            startActivity(intent);
+                            Toast.makeText(getApplicationContext(), "Пожалуйста, авторизируйтесь заново!", Toast.LENGTH_SHORT).show();
+                        case 500:
+                            Toast.makeText(getApplicationContext(), "Пожалуйста, повторите позже!", Toast.LENGTH_SHORT).show();
+                            break;
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<List<Tweet>> call, Throwable t) {
-                Log.d("Error",t.getMessage());
+                Toast.makeText(Profile.this, "Ошибка сети", Toast.LENGTH_SHORT).show();
             }
         });
     }
-    public void Toast(String text){
-        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+
+    public void updateToken() {
+        Retrofit retrofit = APIUtils.getRetrofit();
+        ServerApi request = retrofit.create(ServerApi.class);
+
+        Map<String, String> hashMap = new HashMap<>();
+        hashMap.put("refreshToken", token.getRefreshToken());
+
+        Call<Token> call = request.getNewToken(hashMap);
+        call.enqueue(new Callback<Token>() {
+            @Override
+            public void onResponse(Call<Token> call, Response<Token> response) {
+                if (response.isSuccessful()){
+                    response.body();
+                    token.setAccessToken(response.body().getAccessToken());
+                    token.setRefreshToken(response.body().getRefreshToken());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Token> call, Throwable t) {
+                Toast.makeText(Profile.this, "Ошибка сети", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+
 }

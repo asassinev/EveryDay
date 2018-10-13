@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.example.asass.firstcs.API.ServerApi;
 import com.example.asass.firstcs.R;
 import com.example.asass.firstcs.model.User;
+import com.example.asass.firstcs.utils.APIUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -27,15 +28,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import static com.example.asass.firstcs.utils.config.BASE_URL;
 
 public class Registration extends Activity {
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
-    private ProgressDialog pDialog;
 
     Button Regbut;
     EditText Login, Password, Email;
@@ -61,24 +53,15 @@ public class Registration extends Activity {
                     if (login.isEmpty() || password.isEmpty() || email.isEmpty()) {
                         Toast.makeText(getApplicationContext(), "Укажите все данные.", Toast.LENGTH_SHORT).show();
                     } else {
-                        Gson gson = new GsonBuilder()
-                                .setLenient()
-                                .create();
-
-                        Retrofit retrofit = new Retrofit.Builder()
-                                .baseUrl(BASE_URL)
-                                .addConverterFactory(GsonConverterFactory.create(gson))
-                                .build();
-
+                        Retrofit retrofit = APIUtils.getRetrofit();
                         ServerApi reg = retrofit.create(ServerApi.class);
                         reg.createUser(login, password, email).enqueue(new Callback<User>() {
                             @Override
                             public void onResponse(Call<User> call, Response<User> response) {
                                 if (response.isSuccessful()) {
                                     response.body();
-                                    Toast.makeText(getApplicationContext(), "Добро пожаловать!", Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(Registration.this, Profile.class);
-                                    intent.putExtra("login", login);
+                                    Toast.makeText(getApplicationContext(), "Успешно!", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(Registration.this, MainActivity.class);
                                     startActivity(intent);
                                 } else {
                                     switch(response.code()) {
@@ -86,15 +69,16 @@ public class Registration extends Activity {
                                             Toast.makeText(getApplicationContext(), "Логин занят!", Toast.LENGTH_SHORT).show();
                                             break;
                                         case 500:
-                                            // ошибка на сервере. можно использовать ResponseBody, см. ниже
+                                            Toast.makeText(getApplicationContext(), "Пожалуйста, повторите позже!", Toast.LENGTH_SHORT).show();
                                             break;
                                     }
                                     System.out.println(response.errorBody());
                                 }
                             }
+
                             @Override
                             public void onFailure(Call<User> call, Throwable t) {
-                                Toast.makeText(Registration.this, "An error occurred during networking", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Registration.this, "Ошибка сети", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -104,7 +88,13 @@ public class Registration extends Activity {
                 }
             }
         });
+    }
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }
 

@@ -3,13 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:background="@color/colorPrimary">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="10dp"
         android:orientation="vertical"
         android:background="@color/vk_white">
 
@@ -18,27 +16,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
-            android:paddingStart="8dp"
-            android:paddingTop="8dp"
             android:text="TextView"
-            android:textColor="@color/colorText"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            android:paddingBottom="8dp"
-            android:paddingStart="8dp"
-            android:text="Заметки"
-            android:textColor="@color/colorText" />
+            android:padding="15dp"
+            android:textColor="@color/vk_white"
+            android:textSize="36sp"/>
 
         <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/vk_white"
             android:layout_margin="10dp">
 
             <android.support.v7.widget.RecyclerView
@@ -52,11 +38,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|right"
                 android:layout_marginBottom="10dp"
-                android:background="@color/colorRed"
                 app:backgroundTint="@color/colorRed"
                 android:layout_marginRight="10dp"
                 android:src="@drawable/ic_action_name"
-                app:fabSize="normal" />
+                app:fabSize="normal"/>
         </FrameLayout>
 
     </LinearLayout>

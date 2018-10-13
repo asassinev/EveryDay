@@ -31,4 +31,11 @@ public interface ServerApi {
 
     @GET("/text/get")
     Call<List<Tweet>> getTweets(@Query("login") String Login,  @Header("Authorization") String accessToken);
+
+    @POST("/text/delete")
+    Call<Tweet> deleteTweet(@Query("createdAt") String time);
+
+    @POST("/user/refresh-tokens")
+    Call<Token> getNewToken(@Body Map<String, String> map);
+
 }

@@ -1,35 +1,73 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/customdialog"
+    android:layout_width="350dp"
+    android:layout_height="wrap_content"
+    android:background="@color/vk_white"
     android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:padding="10dp"
-    >
+    android:layout_gravity="center">
+
     <TextView
-        android:id="@+id/dialogtextview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
-    <EditText
-        android:id="@+id/dialogHeader"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        />
-    <EditText
-        android:id="@+id/dialogBody"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        />
-    <Button
-        android:id="@+id/dialogAdd"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Add text"
-        />
-    <Button
-        android:id="@+id/dialogdismiss"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Exit"
-        />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Добавление заметки"
+        android:textColor="#fff"
+        android:gravity="center"
+        android:padding="15dp"
+        android:background="@color/colorPrimary"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="50dp">
+
+        <EditText
+            android:id="@+id/dialogHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Заголовок"
+            android:inputType="text"
+            android:padding="15dp"
+            android:textColor="@color/vk_black"
+            android:textColorHint="@color/vk_black"
+            android:textSize="14sp" />
+
+        <EditText
+            android:id="@+id/dialogBody"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:hint="Сообщение"
+            android:inputType="textMultiLine"
+            android:padding="15dp"
+            android:scrollbars="vertical"
+            android:gravity="start"
+            android:textColor="@color/vk_black"
+            android:textColorHint="@color/vk_black"
+            android:textSize="14sp"
+            android:textStyle="italic"
+            android:verticalScrollbarPosition="defaultPosition" />
+
+        <Button
+            android:id="@+id/dialogAdd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/roundbtn"
+            android:text="Добавить"
+            android:textSize="14sp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:textColor="#fff"/>
+
+        <Button
+            android:id="@+id/dialogdismiss"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/roundbtn"
+            android:text="Отмена"
+            android:textSize="14sp"
+            android:textColor="#fff"/>
+
+    </LinearLayout>
 </LinearLayout>
