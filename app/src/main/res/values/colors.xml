@@ -2,22 +2,12 @@
 <resources>
 
     <!--color Theme -->
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryVariant">#3700b3</color>
-    <color name="colorSecondary">#03DAC6</color>
-    <color name="colorSecondaryVariant">#018786</color>
-    <color name="colorBackgroung">#ffffff</color>
-    <color name="colorSurface">#ffffff</color>
-    <color name="colorError">#c51162</color>
-    <color name="colorOnPrimary">#ffffff</color>
-    <color name="colorOnSecondary">#000000</color>
-    <color name="colorOnBackground">#000000</color>
-    <color name="colorOnSurface">#000000</color>
-    <color name="colorOnError">#000000</color>
-
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
 
     <color name="colorText">#000000</color>
     <color name="colorBackText">#651FFF</color>
-    <color name="colorRed">#FF0266</color>
-    <color name="background_material_light">#000000</color>
+    <color name="colorRed">#ff0266</color>
+    <color name="gray">#7b7b7b</color>
 </resources>

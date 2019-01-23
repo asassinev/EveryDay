@@ -1,7 +1,6 @@
 package com.example.asass.firstcs.Activity;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -16,16 +15,11 @@ import com.example.asass.firstcs.API.ServerApi;
 import com.example.asass.firstcs.R;
 import com.example.asass.firstcs.model.User;
 import com.example.asass.firstcs.utils.APIUtils;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
-import static com.example.asass.firstcs.utils.config.BASE_URL;
 
 public class Registration extends Activity {
 

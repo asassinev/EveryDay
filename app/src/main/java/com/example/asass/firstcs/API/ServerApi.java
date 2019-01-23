@@ -3,8 +3,8 @@ package com.example.asass.firstcs.API;
 import com.example.asass.firstcs.model.Token;
 import com.example.asass.firstcs.model.Tweet;
 import com.example.asass.firstcs.model.User;
+import com.vk.sdk.VKAccessToken;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,12 +30,14 @@ public interface ServerApi {
     Call<Tweet> createText(@FieldMap Map<String, String> map, @Header("Authorization") String accessToken);
 
     @GET("/text/get")
-    Call<List<Tweet>> getTweets(@Query("login") String Login,  @Header("Authorization") String accessToken);
+    Call<List<Tweet>> getText(@Query("login") String login,  @Header("Authorization") String accessToken);
 
-    @POST("/text/delete")
-    Call<Tweet> deleteTweet(@Query("createdAt") String time);
+    @GET("/text/delete")
+    Call<Tweet> deleteText(@Query("login") String UserName, @Query("createdAt") String time, @Header("Authorization") String accessToken);
 
     @POST("/user/refresh-tokens")
     Call<Token> getNewToken(@Body Map<String, String> map);
+
+
 
 }

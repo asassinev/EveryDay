@@ -3,4 +3,7 @@
     <integer name="com_vk_sdk_AppId">6681103</integer>
     <string name="facebook_app_id">1345293428934721</string>
     <string name="fb_login_protocol_scheme">fb1345293428934721</string>
+    <string name="profile">Профиль</string>
+    <string name="notifications">Уведомления</string>
+    <string name="notes">Заметки</string>
 </resources>
