@@ -1,7 +1,6 @@
 package com.example.asass.firstcs.utils;
 
 import android.content.Context;
-import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -147,7 +146,7 @@ public class APIUtils extends Profile{
             }
         });
     }
-    public static void deleteText(String time){
+    public static void deleteText(final String time){
         Retrofit retrofit = APIUtils.getRetrofit();
         ServerApi request = retrofit.create(ServerApi.class);
         Call<Tweet> call = request.deleteText(user.getLogin() ,time, token.getAccessToken());
@@ -155,13 +154,23 @@ public class APIUtils extends Profile{
             @Override
             public void onResponse(Call<Tweet> call, Response<Tweet> response) {
                 if (response.isSuccessful()){
-                    recyclerView.getAdapter().notifyDataSetChanged();
-
+                    loadText();
                 } else {
-//                    Toast("Error", context);
+                    switch(response.code()) {
+                        case 400:
+                            //old token
+                            token = updateToken();
+                            deleteText(time);
+                            break;
+                        case 401:
+                            //invalid token
+                            //Toast("Пожалуйста, авторизируйтесь заново!", context);
+                        case 500:
+                            //Toast("Пожалуйста, повторите позже!", context);
+                            break;
+                    }
                 }
             }
-
             @Override
             public void onFailure(Call<Tweet> call, Throwable t) {
 

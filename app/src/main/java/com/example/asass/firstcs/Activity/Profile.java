@@ -29,7 +29,7 @@ public class Profile extends Activity {
 
     protected static EditText customDialog_Header, customDialog_Body;
     private Button customDialog_Update, customDialog_Dismiss;
-    TextView Head, Body;
+    TextView Head, Body, Welcome;
     FloatingActionButton floatingActionButton1;
     protected static User user = new User();
     protected static Token token = new Token();
@@ -58,6 +58,7 @@ public class Profile extends Activity {
     private void setView(){
         Head = (TextView) findViewById(R.id.head);
         Body = (TextView) findViewById(R.id.body);
+        Welcome = (TextView) findViewById(R.id.welcome);
     }
 
     public void getExtra() {
@@ -65,6 +66,7 @@ public class Profile extends Activity {
         user.setLogin(intent.getStringExtra("login"));
         token.setAccessToken(intent.getStringExtra("accessToken"));
         token.setRefreshToken(intent.getStringExtra("refreshToken"));
+        Welcome.setText("Добро пожаловать, " + user.getLogin() + "!");
     }
 
     private Button.OnClickListener customDialog_UpdateOnClickListener

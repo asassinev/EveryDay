@@ -17,9 +17,29 @@
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
             android:padding="15dp"
-            android:text="Заметки"
+            android:text="EveryDay"
             android:textColor="@color/vk_white"
             android:textSize="36sp" />
+
+        <TextView
+            android:id="@+id/welcome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:text="TextView"
+            android:textAllCaps="false"
+            android:textColor="@color/colorText"
+            android:textSize="20sp"
+            android:textStyle="italic" />
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:background="@android:color/darker_gray"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"/>
 
         <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
